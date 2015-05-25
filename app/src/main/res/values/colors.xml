@@ -2,4 +2,5 @@
 <resources>
 
     <color name="statusBar">#00CF9F</color>
+    <color name="editIcon">#FFFFFF</color>
 </resources>

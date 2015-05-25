@@ -2,5 +2,6 @@
 <resources>
     <style name="AppTheme" parent="android:Theme.Material.Light">
         <item name="android:colorPrimaryDark">@color/statusBar</item>
+        <item name="android:color">@color/editIcon</item>
     </style>
 </resources>

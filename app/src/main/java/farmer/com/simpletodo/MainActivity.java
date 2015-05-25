@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +25,8 @@ public class MainActivity extends Activity {
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
     private ListView lvItems;
+    private String m_text = "";
+
 
 
     @Override
@@ -76,13 +81,50 @@ public class MainActivity extends Activity {
                 });
     }
 
+    public void testToast(){
+        Toast.makeText(getApplicationContext(), "this is my Toast message!!! =)",
+                Toast.LENGTH_LONG).show();
+    }
+
     public void onAddItem(View v) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Title");
+
+        // Setting up the input
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        // Setting up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                m_text = input.getText().toString();
+                itemsAdapter.add(m_text);
+                input.setText("");
+                writeItems();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+    }
+ /*
+        NOTE: Trying to implement this as a separate dialog or activity in the future.
+              Commenting out for now
+
+  public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
         itemsAdapter.add(itemText);
         etNewItem.setText("");
         writeItems();
-    }
+    }*/
 
     private void readItems() {
         File filesDir = getFilesDir();
