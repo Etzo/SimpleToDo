@@ -5,13 +5,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
@@ -33,7 +36,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        lvItems = (ListView) findViewById(R.id.lvItems);
+        lvItems = (ListView) findViewById(android.R.id.list);
+        lvItems.setEmptyView(findViewById(android.R.id.empty));
+
+
         items = new ArrayList<String>();
         readItems();
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
@@ -53,6 +59,7 @@ public class MainActivity extends Activity {
 
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("Delete entry")
+                                .setIcon(R.drawable.ic_trash)
                                 .setMessage("Are you sure you want to delete this entry?")
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     @Override
@@ -81,50 +88,58 @@ public class MainActivity extends Activity {
                 });
     }
 
-    public void testToast(){
-        Toast.makeText(getApplicationContext(), "this is my Toast message!!! =)",
-                Toast.LENGTH_LONG).show();
-    }
 
     public void onAddItem(View v) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        // set title
+        alertDialogBuilder.setTitle("Add new entry");
+        alertDialogBuilder.setIcon(R.drawable.ic_check);
+        alertDialogBuilder.setCancelable(true);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Title");
 
-        // Setting up the input
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        builder.setView(input);
 
-        // Setting up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        final EditText input = new EditText(this); // Y U HEFF TO BE FINAL
 
-                m_text = input.getText().toString();
-                itemsAdapter.add(m_text);
-                input.setText("");
-                writeItems();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        alertDialogBuilder.setMessage("");
+        alertDialogBuilder.setView(input);
+
+        // set dialog message
+        alertDialogBuilder
+
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        m_text = input.getText().toString();
+
+                        // Check for null entry
+                        if (m_text.length() == 0){
+
+                            Toast.makeText(getApplicationContext(), "Please enter an item", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+
+                            itemsAdapter.add(m_text);
+                            input.setText("");
+                            writeItems();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it. First line automatically displays the keyboard
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+
+
     }
- /*
-        NOTE: Trying to implement this as a separate dialog or activity in the future.
-              Commenting out for now
 
-  public void onAddItem(View v) {
-        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
-        etNewItem.setText("");
-        writeItems();
-    }*/
 
     private void readItems() {
         File filesDir = getFilesDir();
