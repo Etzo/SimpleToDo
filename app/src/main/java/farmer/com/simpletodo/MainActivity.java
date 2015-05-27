@@ -91,12 +91,10 @@ public class MainActivity extends Activity {
 
     public void onAddItem(View v) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        // set title
+        // set dialog attributes
         alertDialogBuilder.setTitle("Add new entry");
         alertDialogBuilder.setIcon(R.drawable.ic_check);
         alertDialogBuilder.setCancelable(true);
-
-
 
         final EditText input = new EditText(this); // Y U HEFF TO BE FINAL
 
